@@ -4,7 +4,7 @@ set -u
 set -e
 
 lang=$1
-topdir="$PWD"
+topdir=`pwd`
 
 if [ "$(uname)" == "Darwin" ]
 then

@@ -4,11 +4,11 @@ name: CI
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
+  # Triggers the workflow on push events but only for the master branch
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  schedule:
+     - cron:  '0 8 * * *' # schedule 8:00
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -23,21 +23,32 @@ jobs:
       fail-fast: true
       matrix:
         os:
-          - macos-latest
-          - ubuntu-latest
+          - macos-11
+          #- ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          path: ./master
       - name: Build
         run: |
+          cd ./master
           ./batch.sh
-          export platform=$(echo ${{ runner.os }} | awk '{print tolower($0)}')
-          zip -r "libs-${platform}-x64.zip" dist
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      - name: Checkout branch mac
+        uses: actions/checkout@v4
         with:
-          draft: true
-          files: |
-            libs-*.zip
+          ref: "macos"
+          path: ./macos
+      - name: Push to branch
+        run: |
+          cd ./macos
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git rm -rf --ignore-unmatch .  > /dev/null
+          cp -RfL ../master/dist/* .
+          git add -f .
+          git commit -m "Auto Build $(date +'%Y-%m-%d')"
+          git push
+

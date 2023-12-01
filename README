@@ -1,3 +1,7 @@
+
+Auto Build tree-sitter lib && push libs to branch macos
+
+
 This is an unofficial script that builds tree-sitter grammars that can
 be used by Emacs 29 and above.
 
