@@ -62,3 +62,15 @@ then
 else
     printf "%s\n" "${languages[@]}" | xargs -P"${JOBS}" -n1 ./build.sh
 fi
+
+# push to target
+cd ../target
+git config user.name github-actions
+git config user.email github-actions@github.com
+git rm -rf --ignore-unmatch .  > /dev/null
+cp -RfL ../master/dist/* .
+git add -f .
+git commit -m "Auto Build $(date +'%Y-%m-%d')"
+git push
+
+cd ..

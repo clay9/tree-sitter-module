@@ -1,0 +1,36 @@
+name: windows
+on:
+  push:
+    branches: [ master ]
+  schedule:
+     - cron:  '0 8 * * *' # schedule 8:00
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-2019
+    strategy:
+      fail-fast: true
+      matrix:
+        msystem: ["MINGW64"]
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -S --noconfirm --needed --noprogressbar make mingw-w64-x86_64-gcc
+        shell: 'C:/shells/msys2bash.cmd {0}'
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: ./master
+      - name: Checkout target
+        uses: actions/checkout@v4
+        with:
+          ref: "windows"
+          path: ./target          
+      - name: Build
+        run: |
+          export PATH="/mingw64/bin:/C/Program Files/Git/bin:$PATH"
+          cd ./master
+          ./batch.sh          
+          ls -l dist
+        shell: 'C:/shells/msys2bash.cmd {0}'
