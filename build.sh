@@ -4,7 +4,8 @@ set -u
 set -e
 
 lang=$1
-topdir=`pwd`
+dist=$2
+cfg=$3
 
 if [ "$(uname)" == "Darwin" ]
 then
@@ -137,6 +138,19 @@ fi
 # C files refer to files like "../../common/scanner.h".
 cd "${lang}/${sourcedir}"
 
+### Check
+
+# get remote head
+cur_commit=`git log --pretty=oneline -1 |awk '{print $1}'`
+# compare with old-head
+old_commit=${lang}
+# write to cfg
+echo "${lang}=${cur_commit}" >> $cfg
+# when same, return
+if [[ "$cur_commit" == "$old_commit" ]]; then
+    exit 0
+fi
+
 ### Build
 
 cc -fPIC -c -I. parser.c
@@ -157,10 +171,5 @@ then
 else
     cc -fPIC -shared *.o -o "libtree-sitter-${lang}.${soext}"
 fi
-
-### Copy out
-
-mkdir -p "${topdir}/dist"
-cp "libtree-sitter-${lang}.${soext}" "${topdir}/dist"
-cd "${topdir}"
-rm -rf "${lang}"
+# mv to dist
+mv "libtree-sitter-${lang}.${soext}" $dist

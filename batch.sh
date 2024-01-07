@@ -53,24 +53,39 @@ languages=(
     # 'bison'
 )
 
-if [ -z "${JOBS:-}" ]
-then
-    for language in "${languages[@]}"
-    do
-        ./build.sh "${language}"
-    done
-else
-    printf "%s\n" "${languages[@]}" | xargs -P"${JOBS}" -n1 ./build.sh
+# read old cfg
+old_cfg=$1/cfg
+if [ -f "old_cfg" ]; then
+    source $old_cfg
 fi
 
-# push to target
+# build.sh
+current=`pwd`
+dist="${current}/dist"
+cfg="${current}/cfg"
+mkdir -p dist
+
+for language in "${languages[@]}"
+do
+    ./build.sh "${language}" $dist $cfg
+    cd $current
+done
+
+
+### push to target
+
+# check dist is empty
+if [ -z $dist ]; then
+    exit 0
+fi
+
+# mv dist => target && push
 cd ../target
 git config user.name github-actions
 git config user.email github-actions@github.com
 git rm -rf --ignore-unmatch .  > /dev/null
-cp -RfL ../master/dist/* .
+mv ${dist}/* .
+mv $cfg .
 git add -f .
 git commit -m "Auto Build $(date +'%Y-%m-%d')"
 git push
-
-cd ..
