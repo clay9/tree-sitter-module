@@ -45,7 +45,7 @@ languages=(
     # 'verilog'
     # 'vhdl'
     # 'wgsl'
-     'yaml'
+    # 'yaml'
     # 'dart'
     # 'souffle'
     # 'kotlin'
