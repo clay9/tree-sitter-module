@@ -1,6 +1,0 @@
-
-Auto Build tree-sitter lib
-
-1. check tree-sitter-${lang} is update
-2. compile new tree-sitter
-3. push libs to branch windows|macos
