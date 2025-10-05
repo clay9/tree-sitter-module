@@ -1,4 +1,9 @@
 
+不再使用预编译. 原因:
+1. 意义不大. 只有每次安装emacs环境的时候, 才会触发语言解析器的编译动作
+2. 对于复杂的环境, 预编译反而导致解析器动态库有问题
+
+#############################
 Auto Build tree-sitter lib
 
 1. check tree-sitter-${lang} is update
