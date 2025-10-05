@@ -2,8 +2,8 @@ name: macos
 on:
   push:
     branches: [ master ]
-  schedule:
-     - cron:  '0 8 * * *' # schedule 8:00
+#  schedule:
+#     - cron:  '0 8 * * *' # schedule 8:00
   workflow_dispatch:
 
 jobs:
